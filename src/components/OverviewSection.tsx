@@ -1,5 +1,6 @@
 import { MultilineText } from './MultilineText'
 import type { Overview } from '../types/content'
+import { CountryFlag } from './CountryFlag'
 
 interface OverviewSectionProps {
   overview: Overview
@@ -26,9 +27,11 @@ export function OverviewSection({ overview }: OverviewSectionProps) {
         <div className="hosts-row">
           {overview.hosts.map((host) => (
             <div key={host.name} className="host-cell">
-              <div className="host-flag">{host.flag}</div>
               <div className="host-info">
-                <div className="host-name">{host.name}</div>
+                <div className="host-name">
+                  <CountryFlag code={host.flagCode} label={host.name} className="host-name-flag" />
+                  <span>{host.name}</span>
+                </div>
                 <MultilineText className="host-detail" lines={host.detail} />
               </div>
             </div>
@@ -41,8 +44,10 @@ export function OverviewSection({ overview }: OverviewSectionProps) {
             {overview.favorites.map((favorite) => (
               <div key={favorite.rank} className="fav-row">
                 <div className="fav-rank">{favorite.rank}</div>
-                <div className="fav-flag">{favorite.flag}</div>
-                <div className="fav-name">{favorite.name}</div>
+                <div className="fav-name">
+                  <CountryFlag code={favorite.flagCode} label={favorite.name} className="fav-name-flag" />
+                  <span>{favorite.name}</span>
+                </div>
                 <div className="fav-group">{favorite.group}</div>
                 <div className="fav-odds">{favorite.odds}</div>
               </div>

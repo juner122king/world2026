@@ -1,4 +1,5 @@
 import type { Group } from '../types/content'
+import { CountryFlag } from './CountryFlag'
 
 interface GroupsSectionProps {
   groups: Group[]
@@ -23,8 +24,10 @@ export function GroupsSection({ groups }: GroupsSectionProps) {
             <div className="gc-teams">
               {group.teams.map((team) => (
                 <div key={`${group.letter}-${team.name}`} className="gc-team">
-                  <span className="gc-flag">{team.flag}</span>
-                  <span className="gc-name">{team.name}{team.champion ? ' 🏆' : ''}</span>
+                  <span className="gc-name">
+                    <CountryFlag code={team.flagCode} label={team.name} className="gc-flag" />
+                    <span>{team.name}{team.champion ? ' 🏆' : ''}</span>
+                  </span>
                   {team.debut && <span className="gc-debut">首秀</span>}
                 </div>
               ))}

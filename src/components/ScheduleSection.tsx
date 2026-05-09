@@ -1,5 +1,6 @@
 import { MultilineText } from './MultilineText'
 import type { WorldCupContent } from '../types/content'
+import { CountryFlag } from './CountryFlag'
 
 interface ScheduleSectionProps {
   schedule: WorldCupContent['schedule']
@@ -25,9 +26,19 @@ export function ScheduleSection({ schedule }: ScheduleSectionProps) {
             {day.matches.map((match) => (
               <div key={`${day.day}-${match.time}-${match.home.name}-${match.away.name}`} className="match-row">
                 <div className="mr-time">{match.time}</div>
-                <div className="mr-home"><span className="mr-team-flag">{match.home.flag}</span><span className="mr-team-name">{match.home.name}</span></div>
+                <div className="mr-home">
+                  <span className="mr-team-name">
+                    <CountryFlag code={match.home.flagCode} label={match.home.name} className="mr-team-flag" />
+                    <span>{match.home.name}</span>
+                  </span>
+                </div>
                 <div className="mr-vs">VS</div>
-                <div className="mr-away"><span className="mr-team-flag">{match.away.flag}</span><span className="mr-team-name">{match.away.name}</span></div>
+                <div className="mr-away">
+                  <span className="mr-team-name">
+                    <CountryFlag code={match.away.flagCode} label={match.away.name} className="mr-team-flag" />
+                    <span>{match.away.name}</span>
+                  </span>
+                </div>
                 <div className="mr-info">
                   <div className="mr-group">{match.group}</div>
                   <MultilineText className="mr-venue" lines={match.venue} />

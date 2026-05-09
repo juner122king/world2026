@@ -22,7 +22,7 @@ export interface Hero {
 }
 
 export interface GroupTeam {
-  flag: string
+  flagCode: string
   name: string
   debut?: boolean
   champion?: boolean
@@ -85,14 +85,14 @@ export interface OverviewStat {
 }
 
 export interface HostSummary {
-  flag: string
+  flagCode: string
   name: string
   detail: string[]
 }
 
 export interface Favorite {
   rank: string
-  flag: string
+  flagCode: string
   name: string
   group: string
   odds: string

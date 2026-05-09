@@ -49,7 +49,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const countdownDate = content?.hero.openingDate ?? ''
-  const { label: countdownLabel } = useCountdown(countdownDate)
+  const countdown = useCountdown(countdownDate)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -98,11 +98,11 @@ export default function App() {
   return (
     <>
       <Ticker items={content.ticker} />
-      <Hero hero={content.hero} countdownLabel={countdownLabel} />
+      <Hero hero={content.hero} countdown={countdown} />
       <SectionTabs
         activeSection={activeSection}
         onChange={setActiveSection}
-        countdownLabel={countdownLabel}
+        countdown={countdown}
       />
       {activeContent && <section className="tab-pane on">{activeContent.render(content)}</section>}
       <Footer meta={content.meta} currentSection={sectionTitles[activeSection]} />

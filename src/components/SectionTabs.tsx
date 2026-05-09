@@ -1,9 +1,10 @@
 import type { SectionId } from '../types/content'
+import type { CountdownState } from '../hooks/useCountdown'
 
 interface SectionTabsProps {
   activeSection: SectionId
   onChange: (section: SectionId) => void
-  countdownLabel: string
+  countdown: CountdownState
 }
 
 const tabs: Array<{ id: SectionId; label: string }> = [
@@ -13,7 +14,17 @@ const tabs: Array<{ id: SectionId; label: string }> = [
   { id: 'overview', label: '概览' },
 ]
 
-export function SectionTabs({ activeSection, onChange, countdownLabel }: SectionTabsProps) {
+export function SectionTabs({ activeSection, onChange, countdown }: SectionTabsProps) {
+  const isLive = countdown.status === 'live'
+  const isPending = countdown.status === 'loading' || countdown.status === 'invalid'
+  const navCountdownClassName = [
+    'nav-countdown',
+    isLive ? 'live nav-countdown-enter' : '',
+    countdown.status === 'countdown' ? `nav-countdown-pulse pulse-${countdown.pulsePhase}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <nav className="nav-bar">
       <div className="nav-logo">WC26</div>
@@ -29,9 +40,13 @@ export function SectionTabs({ activeSection, onChange, countdownLabel }: Section
           </button>
         ))}
       </div>
-      <div className="nav-countdown">
-        <div className="nav-countdown-num" id="nav-days">{countdownLabel}</div>
-        <div className="nav-countdown-label">天<br />倒计时</div>
+      <div className={navCountdownClassName}>
+        <div className="nav-countdown-num" id="nav-days">
+          {isLive ? 'LIVE' : countdown.compactText}
+        </div>
+        <div className="nav-countdown-label">
+          {isLive ? '已开赛' : isPending ? '倒计时刷新中' : 'DAY : HOUR : MIN : SEC'}
+        </div>
       </div>
     </nav>
   )
