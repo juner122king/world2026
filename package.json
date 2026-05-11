@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && tsc -p tsconfig.vercel.json && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@upstash/redis": "^1.38.0",
     "flag-icons": "^7.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -16,8 +17,10 @@
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@vercel/node": "^5.7.17",
     "@vitejs/plugin-react": "^4.3.2",
     "typescript": "^5.6.2",
+    "vercel": "^53.3.2",
     "vite": "^5.4.10"
   }
 }
