@@ -1,10 +1,12 @@
+import { CountryFlag } from './CountryFlag'
 import { MultilineText } from './MultilineText'
-import type { Hero as HeroContent } from '../types/content'
+import type { Hero as HeroContent, OverallPredictionSummary } from '../types/content'
 import type { CountdownState } from '../hooks/useCountdown'
 
 interface HeroProps {
   hero: HeroContent
   countdown: CountdownState
+  overallPrediction?: OverallPredictionSummary
 }
 
 const countdownUnits: Array<{ key: keyof Pick<CountdownState, 'days' | 'hours' | 'minutes' | 'seconds'>; label: string }> = [
@@ -14,9 +16,10 @@ const countdownUnits: Array<{ key: keyof Pick<CountdownState, 'days' | 'hours' |
   { key: 'seconds', label: 'SEC' },
 ]
 
-export function Hero({ hero, countdown }: HeroProps) {
+export function Hero({ hero, countdown, overallPrediction }: HeroProps) {
   const isLive = countdown.status === 'live'
   const isPending = countdown.status === 'loading' || countdown.status === 'invalid'
+  const heroFavorites = overallPrediction?.favorites.slice(0, 3) ?? []
   const heroRightClassName = [
     'hero-right',
     countdown.status === 'countdown' ? `hero-right-pulse pulse-${countdown.pulsePhase}` : '',
@@ -46,6 +49,32 @@ export function Hero({ hero, countdown }: HeroProps) {
           ))}
         </div>
       </div>
+      {heroFavorites.length > 0 && (
+        <div className="hero-middle" aria-label="夺冠热门">
+          <div className="hero-prediction-card">
+            <div className="hero-prediction-kicker">AI FORECAST</div>
+            <div className="hero-prediction-title">夺冠热门</div>
+            <div className="hero-podium">
+              {heroFavorites.map((favorite, index) => (
+                <div key={favorite.rank} className={`hero-podium-item hero-podium-${index + 1}`}>
+                  <div className="hero-podium-medal">{favorite.probability}%</div>
+                  <div className="hero-podium-team-card">
+                    <CountryFlag
+                      code={favorite.team.flagCode}
+                      label={favorite.team.name}
+                      className="hero-podium-flag"
+                    />
+                    <div className="hero-podium-team">{favorite.team.name}</div>
+                  </div>
+                  <div className="hero-podium-base" aria-hidden="true">
+                    <span>{favorite.rank}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
       <div className={heroRightClassName}>
         <div className="hero-count-label">{hero.countdownLabel}</div>
         {countdown.status === 'countdown' && (

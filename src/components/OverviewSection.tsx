@@ -1,12 +1,13 @@
 import { MultilineText } from './MultilineText'
-import type { Overview } from '../types/content'
+import type { OverallPredictionSummary, Overview } from '../types/content'
 import { CountryFlag } from './CountryFlag'
 
 interface OverviewSectionProps {
   overview: Overview
+  overallPrediction?: OverallPredictionSummary
 }
 
-export function OverviewSection({ overview }: OverviewSectionProps) {
+export function OverviewSection({ overview, overallPrediction }: OverviewSectionProps) {
   return (
     <>
       <div className="sec-header">
@@ -37,6 +38,31 @@ export function OverviewSection({ overview }: OverviewSectionProps) {
             </div>
           ))}
         </div>
+
+        {overallPrediction && (
+          <div className="ai-overview-section">
+            <div className="favs-title">AI 夺冠机率总览</div>
+            <div className="ai-overview-meta">
+              <span>生成时间 · {overallPrediction.generatedAt}</span>
+              <span>内容基线 · {overallPrediction.basisUpdatedAt}</span>
+              <span>状态 · {overallPrediction.status}</span>
+            </div>
+            <div className="ai-overview-note">{overallPrediction.disclaimer}</div>
+            <div className="favs-list ai-favs-list">
+              {overallPrediction.favorites.map((favorite) => (
+                <div key={favorite.rank} className="fav-row ai-fav-row">
+                  <div className="fav-rank">{favorite.rank}</div>
+                  <div className="fav-name">
+                    <CountryFlag code={favorite.team.flagCode} label={favorite.team.name} className="fav-name-flag" />
+                    <span>{favorite.team.name}</span>
+                  </div>
+                  <div className="fav-group">{favorite.insight}</div>
+                  <div className="fav-odds">{favorite.probability}%</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="favs-section">
           <div className="favs-title">{overview.favoritesTitle}</div>
