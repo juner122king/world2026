@@ -42,6 +42,46 @@ export interface ScheduleMatch {
   venue: string[]
 }
 
+export interface PredictionTeamRef {
+  flagCode: string
+  name: string
+}
+
+export interface PredictionFavorite {
+  rank: string
+  team: PredictionTeamRef
+  probability: number
+  insight: string
+}
+
+export interface OverallPredictionSummary {
+  generatedAt: string
+  basisUpdatedAt: string
+  status: 'ready' | 'stale' | 'unavailable'
+  disclaimer: string
+  favorites: PredictionFavorite[]
+}
+
+export interface MatchPredictionProbabilities {
+  home: number
+  draw: number
+  away: number
+}
+
+export interface MatchPrediction {
+  matchKey: string
+  summary: string
+  confidence: string
+  probabilities: MatchPredictionProbabilities
+  reasoning: string[]
+  generatedAt: string
+  status: 'ready' | 'cached' | 'unavailable'
+}
+
+export interface Predictions {
+  overall?: OverallPredictionSummary
+}
+
 export interface ScheduleDay {
   day: string
   month: string
@@ -116,6 +156,7 @@ export interface WorldCupContent {
   }
   knockout: Knockout
   overview: Overview
+  predictions?: Predictions
 }
 
 export type SectionId = 'groups' | 'schedule' | 'knockout' | 'overview'

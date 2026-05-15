@@ -39,7 +39,12 @@ const sections: SectionDefinition[] = [
   },
   {
     id: 'overview',
-    render: (content) => <OverviewSection overview={content.overview} />,
+    render: (content) => (
+      <OverviewSection
+        overview={content.overview}
+        overallPrediction={content.predictions?.overall}
+      />
+    ),
   },
 ]
 
@@ -98,7 +103,7 @@ export default function App() {
   return (
     <>
       <Ticker items={content.ticker} />
-      <Hero hero={content.hero} countdown={countdown} />
+      <Hero hero={content.hero} countdown={countdown} overallPrediction={content.predictions?.overall} />
       <SectionTabs
         activeSection={activeSection}
         onChange={setActiveSection}

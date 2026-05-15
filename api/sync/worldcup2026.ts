@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { fetchProviderPayload, mapProviderPayloadToContent } from '../../server/content/provider.js'
+import { buildOverallPredictions } from '../../server/content/predictions.js'
 import { hasSnapshotStorage, writeContentSnapshot, writeSyncStatus } from '../../server/content/storage.js'
 
 function getBearerToken(header: string | undefined) {
@@ -43,18 +44,27 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
     const payload = await fetchProviderPayload()
     const content = mapProviderPayloadToContent(payload, syncedAt)
+    const nextContent = {
+      ...content,
+      predictions: {
+        ...content.predictions,
+        overall: buildOverallPredictions(content, syncedAt),
+      },
+    }
 
-    await writeContentSnapshot(content)
-    await writeSyncStatus({
-      ok: true,
-      syncedAt,
-      message: 'World Cup content synced successfully',
-    })
+    await Promise.all([
+      writeContentSnapshot(nextContent),
+      writeSyncStatus({
+        ok: true,
+        syncedAt,
+        message: 'World Cup content synced successfully',
+      }),
+    ])
 
     response.status(200).json({
       ok: true,
       syncedAt,
-      matches: content.schedule.days.reduce((total, day) => total + day.matches.length, 0),
+      matches: nextContent.schedule.days.reduce((total, day) => total + day.matches.length, 0),
     })
   } catch (error) {
     const message = error instanceof Error ? error.message : 'World Cup content sync failed'

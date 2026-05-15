@@ -151,5 +151,20 @@
       { "rank": "07", "flagCode": "pt", "name": "葡萄牙", "group": "K组", "odds": "竞争者" },
       { "rank": "08", "flagCode": "nl", "name": "荷兰", "group": "F组", "odds": "竞争者" }
     ]
+  },
+  "predictions": {
+    "overall": {
+      "generatedAt": "2026-05-08T08:00:00.000Z",
+      "basisUpdatedAt": "2026.05.08",
+      "status": "ready",
+      "disclaimer": "AI 概率基于当前分组、赛程与历史强度的摘要推断，每日随内容快照更新。",
+      "favorites": [
+        { "rank": "01", "team": { "flagCode": "es", "name": "西班牙" }, "probability": 18, "insight": "签位稳定，技术体系成熟，淘汰赛上限仍然最高。" },
+        { "rank": "02", "team": { "flagCode": "gb-eng", "name": "英格兰" }, "probability": 16, "insight": "阵容深度充足，边路推进和定位球仍是核心优势。" },
+        { "rank": "03", "team": { "flagCode": "fr", "name": "法国" }, "probability": 15, "insight": "关键点在于中前场转换效率与防线健康度。" },
+        { "rank": "04", "team": { "flagCode": "br", "name": "巴西" }, "probability": 14, "insight": "上限取决于前场个人能力能否持续兑现。" },
+        { "rank": "05", "team": { "flagCode": "ar", "name": "阿根廷" }, "probability": 13, "insight": "卫冕经验让比赛管理能力依旧突出。" }
+      ]
+    }
   }
 }
