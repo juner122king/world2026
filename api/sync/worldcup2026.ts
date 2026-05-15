@@ -9,18 +9,25 @@ function getBearerToken(header: string | undefined) {
 }
 
 function isAuthorized(request: VercelRequest) {
-  const expectedSecret = process.env.SYNC_SECRET || process.env.CRON_SECRET
+  const cronSecret = process.env.CRON_SECRET
+  const syncSecret = process.env.SYNC_SECRET
 
-  if (!expectedSecret) {
+  if (!cronSecret && !syncSecret) {
     return false
   }
 
-  const providedSecret =
-    getBearerToken(request.headers.authorization) ||
-    request.headers['x-sync-secret'] ||
-    request.query.secret
+  const authorizationSecret = getBearerToken(request.headers.authorization)
+  const headerSecret = typeof request.headers['x-sync-secret'] === 'string' ? request.headers['x-sync-secret'] : undefined
+  const querySecret = typeof request.query.secret === 'string' ? request.query.secret : undefined
 
-  return providedSecret === expectedSecret
+  if (cronSecret && authorizationSecret === cronSecret) {
+    return true
+  }
+
+  return Boolean(
+    syncSecret
+      && (authorizationSecret === syncSecret || headerSecret === syncSecret || querySecret === syncSecret),
+  )
 }
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
