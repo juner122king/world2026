@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 import { Footer } from './components/Footer'
 import { GroupsSection } from './components/GroupsSection'
 import { Hero } from './components/Hero'
@@ -111,6 +112,7 @@ export default function App() {
       />
       {activeContent && <section className="tab-pane on">{activeContent.render(content)}</section>}
       <Footer meta={content.meta} currentSection={sectionTitles[activeSection]} />
+      <Analytics />
     </>
   )
 }
