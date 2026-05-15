@@ -24,6 +24,8 @@ npm run preview
 
 同步入口为 `GET/POST /api/sync/worldcup2026`，用于 Vercel Cron 或手动触发。同步接口会从第三方足球 API 拉取数据，经服务端 adapter 转换成前端稳定使用的 `WorldCupContent`。
 
+状态接口为 `GET /api/status/worldcup2026`，用于检查 Redis/KV 是否已配置、是否存在快照、最近同步时间、同步结果和当前快照比赛数量。
+
 需要在 Vercel 配置这些环境变量：
 
 ```bash
@@ -103,3 +105,19 @@ npm run preview
 - 刷新页面后仍可正常打开
 - 静态资源和 `api/content/worldcup2026` 都返回 200
 - 移动端视口没有明显布局错位
+
+## 后端与数据库路线
+
+当前正式方案是 `Vercel Functions + Upstash Redis`：
+- `GET /api/content/worldcup2026` 读取最新聚合快照。
+- `GET/POST /api/sync/worldcup2026` 同步 WC2026 API 并覆盖快照。
+- `GET /api/status/worldcup2026` 查看同步状态和快照概况。
+
+如果后续需要按球队/场馆/小组查询、后台编辑、历史同步记录或数据审计，优先升级为 `Vercel Functions + Supabase Postgres + Upstash Redis`：
+- Supabase 存结构化表，例如 `teams`、`venues`、`matches`、`groups`、`sync_runs`。
+- Redis 继续保存前端读取的 `WorldCupContent` 快照。
+- 前端接口保持不变，避免组件层感知数据库结构。
+
+如果只需要代码化迁移和 serverless Postgres，不需要 Supabase 后台，可改用 `Neon Postgres + Drizzle`。
+
+如果后续出现高频同步、队列、实时比分推送或复杂后台，再考虑独立 Node 后端。

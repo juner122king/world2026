@@ -53,3 +53,13 @@ export async function writeSyncStatus(status: SyncStatus) {
 
   await kv.set(WORLD_CUP_SYNC_STATUS_KEY, status)
 }
+
+export async function readSyncStatus(): Promise<SyncStatus | null> {
+  const kv = await getKv()
+
+  if (!kv) {
+    return null
+  }
+
+  return kv.get<SyncStatus>(WORLD_CUP_SYNC_STATUS_KEY)
+}
