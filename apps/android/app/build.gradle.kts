@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -5,7 +7,7 @@ plugins {
 
 val defaultApiBaseUrl = providers
     .gradleProperty("WORLD2026_API_BASE_URL")
-    .getOrElse("https://world2026.vercel.app")
+    .getOrElse("https://wc2026.junedesigns.xyz")
 
 android {
     namespace = "com.juner.world2026"
@@ -23,5 +25,22 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        getByName("main") {
+            assets.srcDir("../../../public-data")
+        }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
