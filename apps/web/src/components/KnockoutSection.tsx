@@ -1,5 +1,5 @@
 import { MultilineText } from './MultilineText'
-import type { Knockout } from '../types/content'
+import type { Knockout } from '@world2026/content-contract'
 
 interface KnockoutSectionProps {
   knockout: Knockout

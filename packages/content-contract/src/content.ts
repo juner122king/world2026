@@ -78,6 +78,15 @@ export interface MatchPrediction {
   status: 'ready' | 'cached' | 'unavailable'
 }
 
+export interface MatchPredictionRequest {
+  matchKey: string
+  day: Pick<ScheduleDay, 'day' | 'month' | 'weekday'>
+  match: Pick<ScheduleMatch, 'time' | 'group' | 'venue'> & {
+    home: PredictionTeamRef
+    away: PredictionTeamRef
+  }
+}
+
 export interface Predictions {
   overall?: OverallPredictionSummary
 }

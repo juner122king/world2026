@@ -1,6 +1,6 @@
 import { fallbackContent } from './fallbackContent.js'
 import { formatChinaMatchDate } from './date.js'
-import type { GroupTeam, ScheduleDay, ScheduleMatch, WorldCupContent } from '../../src/types/content.js'
+import type { GroupTeam, ScheduleDay, ScheduleMatch, WorldCupContent } from '@world2026/content-contract'
 
 interface ProviderPayload {
   fixtures: unknown[]

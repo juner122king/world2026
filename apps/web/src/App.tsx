@@ -11,7 +11,7 @@ import { SectionTabs } from './components/SectionTabs'
 import { Ticker } from './components/Ticker'
 import { useCountdown } from './hooks/useCountdown'
 import { fetchWorldCupContent } from './services/contentApi'
-import type { SectionId, WorldCupContent } from './types/content'
+import type { SectionId, WorldCupContent } from '@world2026/content-contract'
 
 const sectionTitles: Record<SectionId, string> = {
   groups: '小组赛',

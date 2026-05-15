@@ -1,4 +1,4 @@
-import type { Group } from '../types/content'
+import type { Group } from '@world2026/content-contract'
 import { CountryFlag } from './CountryFlag'
 
 interface GroupsSectionProps {

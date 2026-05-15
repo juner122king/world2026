@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["api", "server", "src/types"]
+  "include": ["api", "server", "packages/content-contract/src"]
 }

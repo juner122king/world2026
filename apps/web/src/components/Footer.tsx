@@ -1,4 +1,4 @@
-import type { Meta } from '../types/content'
+import type { Meta } from '@world2026/content-contract'
 
 interface FooterProps {
   meta: Meta

@@ -1,6 +1,6 @@
 import { CountryFlag } from './CountryFlag'
 import { MultilineText } from './MultilineText'
-import type { Hero as HeroContent, OverallPredictionSummary } from '../types/content'
+import type { Hero as HeroContent, OverallPredictionSummary } from '@world2026/content-contract'
 import type { CountdownState } from '../hooks/useCountdown'
 
 interface HeroProps {

@@ -1,4 +1,4 @@
-import type { WorldCupContent } from '../types/content'
+import type { WorldCupContent } from '@world2026/content-contract'
 
 const contentUrl = import.meta.env.VITE_CONTENT_API_URL || '/api/content/worldcup2026'
 const fallbackContentUrl = `${import.meta.env.BASE_URL}data/worldcup2026.json`

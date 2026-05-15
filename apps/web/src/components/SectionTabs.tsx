@@ -1,4 +1,4 @@
-import type { SectionId } from '../types/content'
+import type { SectionId } from '@world2026/content-contract'
 import type { CountdownState } from '../hooks/useCountdown'
 
 interface SectionTabsProps {

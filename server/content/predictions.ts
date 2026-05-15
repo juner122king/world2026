@@ -4,8 +4,8 @@ import type {
   PredictionFavorite,
   PredictionTeamRef,
   WorldCupContent,
-} from '../../src/types/content.js'
-import type { MatchPredictionRequest } from '../../src/lib/predictions.js'
+  MatchPredictionRequest,
+} from '@world2026/content-contract'
 
 const seededTeams: Array<{ name: string; probability: number; insight: string }> = [
   { name: '西班牙', probability: 18, insight: '签位稳定，技术体系成熟，淘汰赛上限仍然最高。' },

@@ -1,0 +1,12 @@
+{
+  "name": "@world2026/content-contract",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/content.ts",
+      "default": "./src/content.ts"
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import { MultilineText } from './MultilineText'
-import type { OverallPredictionSummary, Overview } from '../types/content'
+import type { OverallPredictionSummary, Overview } from '@world2026/content-contract'
 import { CountryFlag } from './CountryFlag'
 
 interface OverviewSectionProps {

@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { buildMatchPrediction } from '../../server/content/predictions.js'
 import { readMatchPrediction, writeMatchPrediction } from '../../server/content/storage.js'
-import type { MatchPredictionRequest } from '../../src/lib/predictions.js'
+import type { MatchPredictionRequest } from '@world2026/content-contract'
 
 function isPredictionRequest(value: unknown): value is MatchPredictionRequest {
   if (!value || typeof value !== 'object') {

@@ -3,7 +3,7 @@ import {
   WORLD_CUP_MATCH_PREDICTION_KEY_PREFIX,
   WORLD_CUP_SYNC_STATUS_KEY,
 } from './constants.js'
-import type { MatchPrediction, WorldCupContent } from '../../src/types/content.js'
+import type { MatchPrediction, WorldCupContent } from '@world2026/content-contract'
 
 export interface SyncStatus {
   ok: boolean

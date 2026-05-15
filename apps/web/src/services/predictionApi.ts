@@ -1,5 +1,4 @@
-import type { MatchPrediction } from '../types/content'
-import type { MatchPredictionRequest } from '../lib/predictions'
+import type { MatchPrediction, MatchPredictionRequest } from '@world2026/content-contract'
 
 const matchPredictionUrl = '/api/predictions/match'
 

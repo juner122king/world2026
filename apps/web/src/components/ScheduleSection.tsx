@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { MultilineText } from './MultilineText'
-import type { MatchPrediction, WorldCupContent } from '../types/content'
+import type { MatchPrediction, WorldCupContent } from '@world2026/content-contract'
 import { CountryFlag } from './CountryFlag'
 import { createMatchPredictionKey, createMatchPredictionRequest } from '../lib/predictions'
 import { fetchMatchPrediction } from '../services/predictionApi'

@@ -3,26 +3,25 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && tsc -p tsconfig.vercel.json && vite build",
-    "preview": "vite preview"
+    "dev:web": "npm run dev -w @world2026/web",
+    "build:web": "npm run build -w @world2026/web",
+    "preview:web": "npm run preview -w @world2026/web",
+    "build": "npm run build:web && tsc -p tsconfig.vercel.json",
+    "typecheck:api": "tsc -p tsconfig.vercel.json"
   },
   "dependencies": {
-    "@vercel/analytics": "^2.0.1",
     "@upstash/redis": "^1.38.0",
-    "flag-icons": "^7.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@world2026/content-contract": "file:packages/content-contract"
   },
   "devDependencies": {
     "@types/node": "^24.9.1",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
     "@vercel/node": "^5.7.17",
-    "@vitejs/plugin-react": "^4.3.2",
     "typescript": "^5.6.2",
-    "vercel": "^53.3.2",
-    "vite": "^5.4.10"
+    "vercel": "^53.3.2"
   }
 }
