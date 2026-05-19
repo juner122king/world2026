@@ -110,6 +110,9 @@ export function ScheduleSection({ schedule }: ScheduleSectionProps) {
                           <span>AI 结论 · {prediction.summary}</span>
                           <span>置信度 · {prediction.confidence}</span>
                         </div>
+                        <div className="match-prediction-meta">
+                          模型 · {prediction.modelVersion} · 基线 · {prediction.basisUpdatedAt} · 状态 · {prediction.status}
+                        </div>
                         <div className="match-prediction-probabilities">
                           <div>{match.home.name} {prediction.probabilities.home}%</div>
                           <div>平局 {prediction.probabilities.draw}%</div>

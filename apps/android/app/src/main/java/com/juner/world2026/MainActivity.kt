@@ -605,6 +605,7 @@ class MainActivity : Activity() {
         }
         root.addView(text("AI 结论 · ${prediction.summary}", size = 14f, color = ink, typeface = bold()))
         root.addView(text("置信度 · ${prediction.confidence} · ${prediction.status}", size = 11f, color = muted).withMargins(top = 4, bottom = 10))
+        root.addView(text("模型 · ${prediction.modelVersion} · 基线 · ${prediction.basisUpdatedAt}", size = 10f, color = muted, typeface = Typeface.MONOSPACE).withMargins(bottom = 10))
         root.addView(probabilityRow(match.home.name, match.home.flagCode, prediction.probabilities.home).withMargins(top = 4))
         root.addView(probabilityRow("平局", value = prediction.probabilities.draw).withMargins(top = 6))
         root.addView(probabilityRow(match.away.name, match.away.flagCode, prediction.probabilities.away).withMargins(top = 6, bottom = 6))

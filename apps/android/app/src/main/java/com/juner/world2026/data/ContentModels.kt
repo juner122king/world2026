@@ -159,6 +159,8 @@ data class MatchPrediction(
     val confidence: String,
     val probabilities: MatchPredictionProbabilities,
     val reasoning: List<String>,
+    val basisUpdatedAt: String,
+    val modelVersion: String,
     val generatedAt: String,
     val status: String,
 )

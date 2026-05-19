@@ -270,6 +270,7 @@ button { font: inherit; }
 .match-prediction-error { margin-top: 12px; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .08em; color: var(--red); }
 .match-prediction-result { margin-top: 16px; border-top: 1px solid var(--rule); padding-top: 16px; display: grid; gap: 12px; }
 .match-prediction-head { display: flex; justify-content: space-between; gap: 16px; font-family: 'Archivo Black', sans-serif; font-size: 12px; letter-spacing: .04em; }
+.match-prediction-meta { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .06em; color: var(--muted); }
 .match-prediction-probabilities { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .match-prediction-probabilities div { background: var(--ink); color: var(--lime); padding: 12px 14px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .08em; text-align: center; }
 .match-prediction-reasoning { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .06em; color: var(--muted); line-height: 1.7; }

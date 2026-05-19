@@ -12,7 +12,8 @@
     "build:web": "npm run build -w @world2026/web",
     "preview:web": "npm run preview -w @world2026/web",
     "build": "npm run build:web && tsc -p tsconfig.vercel.json",
-    "typecheck:api": "tsc -p tsconfig.vercel.json"
+    "typecheck:api": "tsc -p tsconfig.vercel.json",
+    "test": "tsc -p tsconfig.tests.json && node --test .test-dist/tests/match-predictions.test.js"
   },
   "dependencies": {
     "@upstash/redis": "^1.38.0",

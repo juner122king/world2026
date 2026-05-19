@@ -40,6 +40,8 @@ object ContentJsonParser {
                 away = probabilities.getInt("away"),
             ),
             reasoning = root.getJSONArray("reasoning").stringList(),
+            basisUpdatedAt = root.optString("basisUpdatedAt"),
+            modelVersion = root.optString("modelVersion", "heuristic-v1"),
             generatedAt = root.getString("generatedAt"),
             status = root.getString("status"),
         )

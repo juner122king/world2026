@@ -74,6 +74,8 @@ export interface MatchPrediction {
   confidence: string
   probabilities: MatchPredictionProbabilities
   reasoning: string[]
+  basisUpdatedAt: string
+  modelVersion: string
   generatedAt: string
   status: 'ready' | 'cached' | 'unavailable'
 }

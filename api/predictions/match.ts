@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { buildMatchPrediction } from '../../server/content/predictions.js'
-import { readMatchPrediction, writeMatchPrediction } from '../../server/content/storage.js'
-import type { MatchPredictionRequest } from '@world2026/content-contract'
+import type { MatchPrediction, MatchPredictionRequest } from '@world2026/content-contract'
+import { buildMatchPrediction, createMatchPredictionContext } from '../../server/content/predictions.js'
+import { readContentSnapshot, readMatchPrediction, writeMatchPrediction } from '../../server/content/storage.js'
 
 function isPredictionRequest(value: unknown): value is MatchPredictionRequest {
   if (!value || typeof value !== 'object') {
@@ -25,6 +25,10 @@ function isPredictionRequest(value: unknown): value is MatchPredictionRequest {
     && typeof day?.weekday === 'string'
 }
 
+export function shouldUseCachedPrediction(cachedPrediction: MatchPrediction | null, basisUpdatedAt: string) {
+  return Boolean(cachedPrediction && cachedPrediction.basisUpdatedAt === basisUpdatedAt)
+}
+
 export default async function handler(request: VercelRequest, response: VercelResponse) {
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST')
@@ -38,9 +42,11 @@ export default async function handler(request: VercelRequest, response: VercelRe
   }
 
   try {
+    const contentSnapshot = await readContentSnapshot()
+    const predictionContext = createMatchPredictionContext(request.body, contentSnapshot)
     const cachedPrediction = await readMatchPrediction(request.body.matchKey)
 
-    if (cachedPrediction) {
+    if (shouldUseCachedPrediction(cachedPrediction, predictionContext.basisUpdatedAt)) {
       response.status(200).json({
         ...cachedPrediction,
         status: 'cached',
@@ -48,7 +54,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
       return
     }
 
-    const prediction = buildMatchPrediction(request.body)
+    const prediction = buildMatchPrediction(predictionContext)
     await writeMatchPrediction(prediction)
 
     response.status(200).json(prediction)
