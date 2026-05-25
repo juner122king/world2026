@@ -4,20 +4,26 @@ import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.GridLayout
 import android.widget.HorizontalScrollView
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
+import android.content.Intent
 import com.juner.world2026.config.ApiConfig
 import com.juner.world2026.data.ContentJsonParser
 import com.juner.world2026.data.Favorite
@@ -61,6 +67,7 @@ class MainActivity : Activity() {
     private var footerUpdatedAtText: TextView? = null
     private var footerSourcesText: TextView? = null
     private var navButtons: Map<Section, Button> = emptyMap()
+    private var githubButton: View? = null
     private var destroyed = false
 
     private val paper = Color.rgb(245, 243, 239)
@@ -169,13 +176,14 @@ class MainActivity : Activity() {
         handler.removeCallbacks(countdownRunnable)
         sectionViews.clear()
 
-        val root = LinearLayout(this).apply {
-            orientation = LinearLayout.VERTICAL
+        val root = FrameLayout(this).apply {
             setBackgroundColor(paper)
         }
 
-        root.addView(ticker(nextContent.ticker))
-        root.addView(sectionNav())
+        val chrome = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = FrameLayout.LayoutParams(match, match)
+        }
 
         val scrollView = ScrollView(this).apply {
             isFillViewport = true
@@ -199,7 +207,15 @@ class MainActivity : Activity() {
         page.addView(footer(nextContent))
 
         scrollView.addView(page)
-        root.addView(scrollView, LinearLayout.LayoutParams(match, 0, 1f))
+        chrome.addView(ticker(nextContent.ticker))
+        chrome.addView(scrollView, LinearLayout.LayoutParams(match, 0, 1f))
+        chrome.addView(sectionNav())
+        root.addView(chrome)
+
+        val githubAction = githubButton()
+        root.addView(githubAction)
+        githubButton = githubAction
+
         setContentView(root)
         updateNavSelection()
 
@@ -330,7 +346,8 @@ class MainActivity : Activity() {
         val row = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(dp(6), dp(8), dp(6), dp(8))
-            background = bordered(fill = paper, stroke = ink, strokeWidth = 1)
+            setBackgroundColor(paper)
+            elevation = dp(6).toFloat()
         }
         val buttons = mutableMapOf<Section, Button>()
         Section.entries.forEach { section ->
@@ -356,6 +373,52 @@ class MainActivity : Activity() {
         navButtons = buttons
         return row
     }
+
+    private fun githubButton(): View =
+        ImageButton(this).apply {
+            background = bordered(fill = ink, stroke = ink, radius = 3)
+            setImageResource(R.drawable.ic_github)
+            imageTintList = null
+            scaleType = ImageView.ScaleType.CENTER
+            setPadding(dp(10), dp(10), dp(10), dp(10))
+            contentDescription = "Open GitHub project"
+            elevation = dp(8).toFloat()
+            setOnClickListener {
+                startActivity(
+                    Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/juner122king/world2026")),
+                )
+            }
+
+            layoutParams = FrameLayout.LayoutParams(dp(46), dp(46), Gravity.TOP or Gravity.END).apply {
+                topMargin = dp(48)
+                rightMargin = dp(16)
+            }
+
+            setOnTouchListener { view, event ->
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        view.scaleX = 0.96f
+                        view.scaleY = 0.96f
+                    }
+                    MotionEvent.ACTION_UP,
+                    MotionEvent.ACTION_CANCEL,
+                    -> {
+                        view.scaleX = 1f
+                        view.scaleY = 1f
+                    }
+                }
+                false
+            }
+
+            setOnApplyWindowInsetsListener { view, insets ->
+                (view.layoutParams as? FrameLayout.LayoutParams)?.let { params ->
+                    params.topMargin = insets.systemWindowInsetTop + dp(12)
+                    params.rightMargin = insets.systemWindowInsetRight + dp(12)
+                    view.layoutParams = params
+                }
+                insets
+            }
+        }
 
     private fun updateNavSelection() {
         navButtons.forEach { (section, button) ->

@@ -7,7 +7,7 @@ plugins {
 
 val defaultApiBaseUrl = providers
     .gradleProperty("WORLD2026_API_BASE_URL")
-    .getOrElse("https://wc2026.junedesigns.xyz")
+    .getOrElse("https://world2026.vercel.app/")
 
 android {
     namespace = "com.juner.world2026"

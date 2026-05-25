@@ -54,6 +54,9 @@ button { font: inherit; }
 .ticker-track { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
 .ticker-track span { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .15em; color: var(--lime); text-transform: uppercase; padding: 0 32px; }
 .ticker-track span.sep { color: var(--muted); padding: 0 8px; }
+.github-fab { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 52px); right: calc(env(safe-area-inset-right, 0px) + 22px); z-index: 300; width: 54px; height: 54px; display: grid; place-items: center; color: var(--paper); background: var(--ink); border: 2px solid var(--ink); box-shadow: 8px 8px 0 rgba(10, 10, 10, .14); transition: transform var(--tick), color var(--tick), background var(--tick), box-shadow var(--tick); }
+.github-fab:hover { transform: translateY(-2px); color: var(--ink); background: var(--lime); box-shadow: 10px 10px 0 rgba(10, 10, 10, .18); }
+.github-fab-icon { width: 28px; height: 28px; flex-shrink: 0; }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .hero { border-bottom: 2px solid var(--ink); position: relative; overflow: hidden; padding: 0 40px 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 440px) auto; align-items: end; min-height: 360px; }
 .hero-left { padding-bottom: 32px; }
@@ -345,6 +348,8 @@ footer { border-top: 2px solid var(--ink); display: grid; grid-template-columns:
   .ko-stages, .hosts-row, .stats-strip { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 700px) {
+  .github-fab { top: calc(env(safe-area-inset-top, 0px) + 44px); right: calc(env(safe-area-inset-right, 0px) + 14px); width: 46px; height: 46px; box-shadow: 6px 6px 0 rgba(10, 10, 10, .14); }
+  .github-fab-icon { width: 24px; height: 24px; }
   .hero { grid-template-columns: 1fr; padding: 0 20px; }
   .hero-middle { grid-column: auto; grid-row: auto; padding: 0 0 24px; border-top: none; }
   .hero-prediction-title { font-size: clamp(34px, 12vw, 52px); }
