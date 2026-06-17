@@ -227,6 +227,12 @@ button { font: inherit; }
 .sec-header-label { font-family: 'Archivo Black', sans-serif; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; padding: 18px 32px; border-right: 1.5px solid var(--rule); }
 .sec-header-title { font-family: 'Archivo Black', sans-serif; font-size: clamp(28px, 4vw, 48px); letter-spacing: -.03em; padding: 14px 32px; }
 .sec-header-count { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .1em; color: var(--muted); padding: 18px 32px; border-left: 1.5px solid var(--rule); }
+.sched-fab { position: fixed; bottom: 28px; right: 28px; z-index: 500; font-family: 'Archivo Black', sans-serif; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding: 12px 24px; border: 2px solid var(--ink); background: var(--paper); color: var(--ink); cursor: pointer; box-shadow: 6px 6px 0 rgba(10, 10, 10, .15); transition: all var(--tick); animation: fabEnter .3s ease both; }
+.sched-fab:hover { background: var(--ink); color: var(--paper); transform: translateY(-2px); box-shadow: 8px 8px 0 rgba(10, 10, 10, .2); }
+.sched-fab--live { border-color: var(--red); color: var(--red); animation: fabEnter .3s ease both, fabPulse 1.6s ease-in-out infinite .3s; }
+.sched-fab--live:hover { background: var(--red); color: #fff; }
+@keyframes fabEnter { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fabPulse { 0%,100% { opacity: 1; } 50% { opacity: .65; } }
 .groups-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-left: 2px solid var(--ink); }
 .group-cell { border-right: 2px solid var(--ink); border-bottom: 2px solid var(--ink); position: relative; overflow: hidden; transition: background var(--tick); }
 .group-cell:hover { background: #fff; }
@@ -415,6 +421,7 @@ footer { border-top: 2px solid var(--ink); display: grid; grid-template-columns:
   .groups-grid, .stats-strip { grid-template-columns: 1fr; }
   .sec-header { grid-template-columns: 1fr; }
   .sec-header-label, .sec-header-title, .sec-header-count { border: none; padding: 16px 20px; }
+  .sched-fab { bottom: 20px; right: 20px; font-size: 11px; padding: 10px 18px; }
   .match-row { grid-template-columns: 1fr; }
   .mr-time { border-right: none; border-bottom: 1px solid var(--rule); padding: 12px 14px; flex-direction: row; justify-content: space-between; }
   .mr-main { grid-template-columns: minmax(0, 1fr); }

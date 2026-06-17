@@ -100,6 +100,7 @@ export default function App() {
   }
 
   const activeContent = sections.find((section) => section.id === activeSection)
+  const scheduleActive = activeSection === 'schedule'
 
   return (
     <>
@@ -135,7 +136,13 @@ export default function App() {
         onChange={setActiveSection}
         countdown={countdown}
       />
-      {activeContent && <section className="tab-pane on">{activeContent.render(content)}</section>}
+      {activeContent && (
+        <section className="tab-pane on">
+          {activeContent.id === 'schedule'
+            ? <ScheduleSection schedule={content.schedule} autoScroll={scheduleActive} />
+            : activeContent.render(content)}
+        </section>
+      )}
       <Footer meta={content.meta} currentSection={sectionTitles[activeSection]} />
       <Analytics />
     </>
