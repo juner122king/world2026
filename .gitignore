@@ -7,6 +7,8 @@ dist/
 vite.config.js
 vite.config.d.ts
 vite-dev.*.log
+vite-local.*.log
+vite-debug.*
 .DS_Store
 .vercel
 
