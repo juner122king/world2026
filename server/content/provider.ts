@@ -1,6 +1,6 @@
 import { fallbackContent } from './fallbackContent.js'
 import { formatChinaMatchDate } from './date.js'
-import type { GroupTeam, ScheduleDay, ScheduleMatch, WorldCupContent } from '@world2026/content-contract'
+import type { Group, GroupStandingEntry, GroupTeam, ScheduleDay, ScheduleMatch, ScheduleMatchStatus, WorldCupContent } from '@world2026/content-contract'
 
 interface ProviderPayload {
   fixtures: unknown[]
@@ -195,6 +195,22 @@ function getString(value: unknown, fallback = '') {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback
 }
 
+function getNumber(value: unknown, fallback = 0) {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value
+  }
+
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Number(value)
+
+    if (Number.isFinite(parsed)) {
+      return parsed
+    }
+  }
+
+  return fallback
+}
+
 function getProvider(): FootballProvider {
   const provider = process.env.FOOTBALL_API_PROVIDER
 
@@ -242,6 +258,68 @@ function createTeam(rawTeam: unknown, fallbackName: string): GroupTeam {
   }
 }
 
+function extractGroupLetter(value: string) {
+  const matches = value.match(/[A-L]/gi)
+
+  if (!matches || matches.length === 0) {
+    return ''
+  }
+
+  if (/group|组/i.test(value)) {
+    return matches[matches.length - 1].toUpperCase()
+  }
+
+  return matches[0].toUpperCase()
+}
+
+function normalizeGroupCode(value: string) {
+  const letter = extractGroupLetter(value)
+  return letter ? `${letter}组` : value
+}
+
+function mapFixtureStatus(rawFixture: ProviderObject): { status: ScheduleMatchStatus; label?: string } {
+  const fixtureMeta = asObject(rawFixture.fixture)
+  const statusMeta = asObject(fixtureMeta.status)
+  const short = getString(statusMeta.short).toUpperCase()
+  const long = getString(statusMeta.long)
+  const rawStatus = getString(rawFixture.status).toUpperCase()
+  const normalized = short || rawStatus
+
+  if (['FT', 'AET', 'PEN', 'CANC', 'ABD', 'AWD', 'WO'].includes(normalized)) {
+    return { status: 'finished', label: long || '已完赛' }
+  }
+
+  if (['1H', '2H', 'HT', 'ET', 'BT', 'P', 'LIVE', 'IN_PLAY'].includes(normalized)) {
+    return { status: 'live', label: long || '进行中' }
+  }
+
+  if (long) {
+    return {
+      status: long.includes('Live') ? 'live' : long.includes('Finished') ? 'finished' : 'scheduled',
+      label: long,
+    }
+  }
+
+  return { status: 'scheduled' }
+}
+
+function mapFixtureScore(rawFixture: ProviderObject) {
+  const goals = asObject(rawFixture.goals)
+  const score = asObject(rawFixture.score)
+  const fulltime = asObject(score.fulltime)
+  const home = getNumber(goals.home, getNumber(fulltime.home, Number.NaN))
+  const away = getNumber(goals.away, getNumber(fulltime.away, Number.NaN))
+
+  if (!Number.isFinite(home) || !Number.isFinite(away)) {
+    return undefined
+  }
+
+  return {
+    home,
+    away,
+  }
+}
+
 function getFixtureDate(rawFixture: ProviderObject) {
   const fixture = asObject(rawFixture.fixture)
   const rawDate =
@@ -277,6 +355,8 @@ function mapFixtureToMatch(rawFixture: unknown): { key: string; match: ScheduleM
   const round = getString(fixture.round, getString(league.round, getString(fixture.group, '世界杯')))
   const stadium = getString(fixture.stadium)
   const city = getString(fixture.city, getString(venue.city, '城市待定'))
+  const matchStatus = mapFixtureStatus(fixture)
+  const score = mapFixtureScore(fixture)
 
   return {
     key: date.key,
@@ -284,11 +364,14 @@ function mapFixtureToMatch(rawFixture: unknown): { key: string; match: ScheduleM
       time: date.time,
       home,
       away,
-      group: groupName ? `${groupName}组` : round,
+      group: groupName ? normalizeGroupCode(groupName) : round,
       venue: [
         getString(venue.name, stadium || '场馆待定'),
         city,
       ],
+      status: matchStatus.status,
+      score,
+      statusLabel: matchStatus.label,
     },
   }
 }
@@ -318,6 +401,95 @@ function buildScheduleDays(fixtures: unknown[]): ScheduleDay[] {
   return Array.from(grouped.entries())
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([, day]) => day)
+}
+
+function getStandingsRows(rawStanding: unknown) {
+  const standing = asObject(rawStanding)
+  const league = asObject(standing.league)
+  const rows = standing.standings ?? league.standings
+
+  if (Array.isArray(rows)) {
+    if (rows.length > 0 && Array.isArray(rows[0])) {
+      return rows.flatMap((entry) => (Array.isArray(entry) ? entry : []))
+    }
+
+    return rows
+  }
+
+  return []
+}
+
+function createStandingEntry(rawEntry: unknown): GroupStandingEntry | null {
+  const entry = asObject(rawEntry)
+  const all = asObject(entry.all)
+  const goals = asObject(all.goals)
+  const team = createTeam(entry.team, getString(entry.name, '待定'))
+  const rank = getNumber(entry.rank, getNumber(entry.position, 0))
+  const played = getNumber(all.played, getNumber(entry.played, 0))
+  const won = getNumber(all.win, getNumber(entry.won, 0))
+  const draw = getNumber(all.draw, getNumber(entry.draw, 0))
+  const lost = getNumber(all.lose, getNumber(entry.lost, 0))
+  const goalsFor = getNumber(goals.for, getNumber(entry.goals_for, 0))
+  const goalsAgainst = getNumber(goals.against, getNumber(entry.goals_against, 0))
+  const goalDifference = getNumber(entry.goalsDiff, getNumber(entry.goal_difference, goalsFor - goalsAgainst))
+  const points = getNumber(entry.points, getNumber(entry.pts, 0))
+
+  if (!team.name) {
+    return null
+  }
+
+  return {
+    rank: rank || 0,
+    team,
+    played,
+    won,
+    draw,
+    lost,
+    goalsFor,
+    goalsAgainst,
+    goalDifference,
+    points,
+  }
+}
+
+function buildGroupStandings(standings: unknown[], fallbackGroups: Group[]) {
+  const standingsByLetter = new Map<string, GroupStandingEntry[]>()
+
+  for (const standing of standings) {
+    const standingObject = asObject(standing)
+    const league = asObject(standingObject.league)
+    const groupName = getString(standingObject.group, getString(league.group))
+    const rows = getStandingsRows(standing)
+    const letter = extractGroupLetter(groupName)
+
+    if (!letter || rows.length === 0) {
+      continue
+    }
+
+    const entries = rows
+      .map((row) => createStandingEntry(row))
+      .filter((entry): entry is GroupStandingEntry => entry !== null)
+      .sort((left, right) => {
+        if (left.rank !== right.rank) {
+          return left.rank - right.rank
+        }
+
+        if (right.points !== left.points) {
+          return right.points - left.points
+        }
+
+        return right.goalDifference - left.goalDifference
+      })
+
+    if (entries.length > 0) {
+      standingsByLetter.set(letter, entries)
+    }
+  }
+
+  return fallbackGroups.map((group) => ({
+    ...group,
+    standings: standingsByLetter.get(group.letter) ?? group.standings,
+  }))
 }
 
 function buildRequestHeaders() {
@@ -392,6 +564,7 @@ export async function fetchProviderPayload(): Promise<ProviderPayload> {
 export function mapProviderPayloadToContent(payload: ProviderPayload, syncedAt = new Date().toISOString()): WorldCupContent {
   const scheduleDays = buildScheduleDays(payload.fixtures)
   const matchCount = scheduleDays.reduce((total, day) => total + day.matches.length, 0)
+  const groups = buildGroupStandings(payload.standings, fallbackContent.groups)
 
   return {
     ...fallbackContent,
@@ -400,6 +573,7 @@ export function mapProviderPayloadToContent(payload: ProviderPayload, syncedAt =
       updatedAt: syncedAt,
       sources: [getProvider(), ...fallbackContent.meta.sources.filter((source) => source !== getProvider())],
     },
+    groups,
     schedule: {
       note: matchCount > 0
         ? `北京时间赛程由服务端同步生成 · 当前快照包含 ${matchCount} 场比赛`

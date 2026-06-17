@@ -28,10 +28,31 @@ export interface GroupTeam {
   champion?: boolean
 }
 
+export interface GroupStandingEntry {
+  rank: number
+  team: GroupTeam
+  played: number
+  won: number
+  draw: number
+  lost: number
+  goalsFor: number
+  goalsAgainst: number
+  goalDifference: number
+  points: number
+}
+
 export interface Group {
   letter: string
   label: string
   teams: GroupTeam[]
+  standings?: GroupStandingEntry[]
+}
+
+export type ScheduleMatchStatus = 'scheduled' | 'live' | 'finished'
+
+export interface ScheduleMatchScore {
+  home: number
+  away: number
 }
 
 export interface ScheduleMatch {
@@ -40,6 +61,9 @@ export interface ScheduleMatch {
   away: GroupTeam
   group: string
   venue: string[]
+  status?: ScheduleMatchStatus
+  score?: ScheduleMatchScore
+  statusLabel?: string
 }
 
 export interface PredictionTeamRef {

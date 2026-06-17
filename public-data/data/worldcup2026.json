@@ -31,8 +31,28 @@
     "openingDate": "2026-06-11T21:00:00Z"
   },
   "groups": [
-    { "letter": "A", "label": "小组 A", "teams": [{ "flagCode": "mx", "name": "墨西哥" }, { "flagCode": "za", "name": "南非" }, { "flagCode": "kr", "name": "韩国" }, { "flagCode": "cz", "name": "捷克" }] },
-    { "letter": "B", "label": "小组 B", "teams": [{ "flagCode": "ca", "name": "加拿大" }, { "flagCode": "ba", "name": "波黑" }, { "flagCode": "qa", "name": "卡塔尔" }, { "flagCode": "ch", "name": "瑞士" }] },
+    {
+      "letter": "A",
+      "label": "小组 A",
+      "teams": [{ "flagCode": "mx", "name": "墨西哥" }, { "flagCode": "za", "name": "南非" }, { "flagCode": "kr", "name": "韩国" }, { "flagCode": "cz", "name": "捷克" }],
+      "standings": [
+        { "rank": 1, "team": { "flagCode": "mx", "name": "墨西哥" }, "played": 1, "won": 1, "draw": 0, "lost": 0, "goalsFor": 2, "goalsAgainst": 1, "goalDifference": 1, "points": 3 },
+        { "rank": 2, "team": { "flagCode": "kr", "name": "韩国" }, "played": 1, "won": 1, "draw": 0, "lost": 0, "goalsFor": 1, "goalsAgainst": 0, "goalDifference": 1, "points": 3 },
+        { "rank": 3, "team": { "flagCode": "cz", "name": "捷克" }, "played": 1, "won": 0, "draw": 0, "lost": 1, "goalsFor": 0, "goalsAgainst": 1, "goalDifference": -1, "points": 0 },
+        { "rank": 4, "team": { "flagCode": "za", "name": "南非" }, "played": 1, "won": 0, "draw": 0, "lost": 1, "goalsFor": 1, "goalsAgainst": 2, "goalDifference": -1, "points": 0 }
+      ]
+    },
+    {
+      "letter": "B",
+      "label": "小组 B",
+      "teams": [{ "flagCode": "ca", "name": "加拿大" }, { "flagCode": "ba", "name": "波黑" }, { "flagCode": "qa", "name": "卡塔尔" }, { "flagCode": "ch", "name": "瑞士" }],
+      "standings": [
+        { "rank": 1, "team": { "flagCode": "ca", "name": "加拿大" }, "played": 1, "won": 1, "draw": 0, "lost": 0, "goalsFor": 3, "goalsAgainst": 1, "goalDifference": 2, "points": 3 },
+        { "rank": 2, "team": { "flagCode": "ch", "name": "瑞士" }, "played": 1, "won": 1, "draw": 0, "lost": 0, "goalsFor": 2, "goalsAgainst": 0, "goalDifference": 2, "points": 3 },
+        { "rank": 3, "team": { "flagCode": "qa", "name": "卡塔尔" }, "played": 1, "won": 0, "draw": 0, "lost": 1, "goalsFor": 0, "goalsAgainst": 2, "goalDifference": -2, "points": 0 },
+        { "rank": 4, "team": { "flagCode": "ba", "name": "波黑" }, "played": 1, "won": 0, "draw": 0, "lost": 1, "goalsFor": 1, "goalsAgainst": 3, "goalDifference": -2, "points": 0 }
+      ]
+    },
     { "letter": "C", "label": "小组 C", "teams": [{ "flagCode": "br", "name": "巴西" }, { "flagCode": "ma", "name": "摩洛哥" }, { "flagCode": "ht", "name": "海地" }, { "flagCode": "gb-sct", "name": "苏格兰" }] },
     { "letter": "D", "label": "小组 D", "teams": [{ "flagCode": "us", "name": "美国" }, { "flagCode": "py", "name": "巴拉圭" }, { "flagCode": "au", "name": "澳大利亚" }, { "flagCode": "tr", "name": "土耳其" }] },
     { "letter": "E", "label": "小组 E", "teams": [{ "flagCode": "de", "name": "德国" }, { "flagCode": "cw", "name": "库拉索", "debut": true }, { "flagCode": "ci", "name": "科特迪瓦" }, { "flagCode": "ec", "name": "厄瓜多尔" }] },
@@ -53,8 +73,8 @@
         "weekday": "周四",
         "badge": "开幕日",
         "matches": [
-          { "time": "15:00", "home": { "flagCode": "mx", "name": "墨西哥" }, "away": { "flagCode": "za", "name": "南非" }, "group": "A组", "venue": ["墨西哥城体育场", "墨西哥城，墨西哥"] },
-          { "time": "22:00", "home": { "flagCode": "kr", "name": "韩国" }, "away": { "flagCode": "cz", "name": "捷克" }, "group": "A组", "venue": ["瓜达拉哈拉体育场", "萨波潘，墨西哥"] }
+          { "time": "15:00", "home": { "flagCode": "mx", "name": "墨西哥" }, "away": { "flagCode": "za", "name": "南非" }, "group": "A组", "venue": ["墨西哥城体育场", "墨西哥城，墨西哥"], "status": "finished", "statusLabel": "已完赛", "score": { "home": 2, "away": 1 } },
+          { "time": "22:00", "home": { "flagCode": "kr", "name": "韩国" }, "away": { "flagCode": "cz", "name": "捷克" }, "group": "A组", "venue": ["瓜达拉哈拉体育场", "萨波潘，墨西哥"], "status": "finished", "statusLabel": "已完赛", "score": { "home": 1, "away": 0 } }
         ]
       },
       {
@@ -62,8 +82,8 @@
         "month": "六月",
         "weekday": "周五",
         "matches": [
-          { "time": "15:00", "home": { "flagCode": "ca", "name": "加拿大" }, "away": { "flagCode": "ba", "name": "波黑" }, "group": "B组", "venue": ["多伦多体育场", "多伦多，加拿大"] },
-          { "time": "21:00", "home": { "flagCode": "us", "name": "美国" }, "away": { "flagCode": "py", "name": "巴拉圭" }, "group": "D组", "venue": ["洛杉矶体育场", "英格尔伍德，美国"] }
+          { "time": "15:00", "home": { "flagCode": "ca", "name": "加拿大" }, "away": { "flagCode": "ba", "name": "波黑" }, "group": "B组", "venue": ["多伦多体育场", "多伦多，加拿大"], "status": "finished", "statusLabel": "已完赛", "score": { "home": 3, "away": 1 } },
+          { "time": "21:00", "home": { "flagCode": "us", "name": "美国" }, "away": { "flagCode": "py", "name": "巴拉圭" }, "group": "D组", "venue": ["洛杉矶体育场", "英格尔伍德，美国"], "status": "live", "statusLabel": "下半场", "score": { "home": 1, "away": 1 } }
         ]
       },
       {
@@ -71,7 +91,7 @@
         "month": "六月",
         "weekday": "周六",
         "matches": [
-          { "time": "15:00", "home": { "flagCode": "qa", "name": "卡塔尔" }, "away": { "flagCode": "ch", "name": "瑞士" }, "group": "B组", "venue": ["旧金山湾区体育场", "旧金山，美国"] },
+          { "time": "15:00", "home": { "flagCode": "qa", "name": "卡塔尔" }, "away": { "flagCode": "ch", "name": "瑞士" }, "group": "B组", "venue": ["旧金山湾区体育场", "旧金山，美国"], "status": "finished", "statusLabel": "已完赛", "score": { "home": 0, "away": 2 } },
           { "time": "18:00", "home": { "flagCode": "br", "name": "巴西" }, "away": { "flagCode": "ma", "name": "摩洛哥" }, "group": "C组", "venue": ["纽约新泽西体育场", "新泽西，美国"] },
           { "time": "21:00", "home": { "flagCode": "ht", "name": "海地" }, "away": { "flagCode": "gb-sct", "name": "苏格兰" }, "group": "C组", "venue": ["波士顿体育场", "波士顿，美国"] },
           { "time": "00:00+1", "home": { "flagCode": "au", "name": "澳大利亚" }, "away": { "flagCode": "tr", "name": "土耳其" }, "group": "D组", "venue": ["BC Place", "温哥华，加拿大"] }
