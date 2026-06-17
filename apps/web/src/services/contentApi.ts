@@ -1,7 +1,7 @@
 import type { WorldCupContent } from '@world2026/content-contract'
 
-const contentUrl = import.meta.env.VITE_CONTENT_API_URL || '/api/content/worldcup2026'
 const fallbackContentUrl = `${import.meta.env.BASE_URL}data/worldcup2026.json`
+const contentUrl = import.meta.env.VITE_CONTENT_API_URL || '/api/content/worldcup2026'
 
 async function fetchJsonContent(url: string, signal?: AbortSignal): Promise<WorldCupContent> {
   const response = await fetch(url, { signal })

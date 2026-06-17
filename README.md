@@ -55,8 +55,10 @@ Web app 位于 `apps/web`，主要技术栈：
 前端内容请求入口：
 
 - `apps/web/src/services/contentApi.ts`
-- 默认请求 `/api/content/worldcup2026`
-- 本地开发时，如果 API 不可用，会回退到 `/data/worldcup2026.json`
+- 生产环境默认请求 `/api/content/worldcup2026`
+- 本地开发由 Vite 在同源下直接生成 `/api/content/worldcup2026`
+- 真实内容源不可用时，回退到 `/data/worldcup2026.json`
+- 可通过 `VITE_CONTENT_API_URL` 手动覆盖内容源地址
 
 静态 fallback 数据位于 `public-data/data/worldcup2026.json`，Vite 会在构建时复制到 `dist/data/worldcup2026.json`。
 
