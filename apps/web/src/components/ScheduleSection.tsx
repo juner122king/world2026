@@ -71,23 +71,47 @@ export function ScheduleSection({ schedule }: ScheduleSectionProps) {
               const prediction = predictions[matchKey]
               const isLoading = loadingKey === matchKey
               const hasError = errorKey === matchKey
+              const hasScore = typeof match.score?.home === 'number' && typeof match.score?.away === 'number'
+              const showScore = hasScore
+              const statusClassName = match.status ? `match-status match-status-${match.status}` : 'match-status'
 
               return (
                 <div key={matchKey} className="match-card">
                   <div className="match-row">
-                    <div className="mr-time">{match.time}</div>
-                    <div className="mr-home">
-                      <span className="mr-team-name">
-                        <CountryFlag code={match.home.flagCode} label={match.home.name} className="mr-team-flag" />
-                        <span>{match.home.name}</span>
-                      </span>
+                    <div className="mr-time">
+                      <div className="mr-time-label">{match.time}</div>
+                      {match.status === 'live' && <div className={statusClassName}>{match.statusLabel ?? '进行中'}</div>}
+                      {match.status === 'finished' && <div className={statusClassName}>{match.statusLabel ?? '已完赛'}</div>}
                     </div>
-                    <div className="mr-vs">VS</div>
-                    <div className="mr-away">
-                      <span className="mr-team-name">
-                        <CountryFlag code={match.away.flagCode} label={match.away.name} className="mr-team-flag" />
-                        <span>{match.away.name}</span>
-                      </span>
+                    <div className="mr-main">
+                      <div className="mr-home">
+                        <span className="mr-team-name">
+                          <CountryFlag code={match.home.flagCode} label={match.home.name} className="mr-team-flag" />
+                          <span>{match.home.name}</span>
+                        </span>
+                      </div>
+                      <div className="mr-vs">
+                        <div className="mr-vs-label">{showScore ? '全场' : 'VS'}</div>
+                        {showScore ? (
+                          <div className="mr-score">
+                            <span>{match.score?.home}</span>
+                            <span className="mr-score-sep">-</span>
+                            <span>{match.score?.away}</span>
+                          </div>
+                        ) : (
+                          <div className="mr-score mr-score-pending">
+                            <span>-</span>
+                            <span className="mr-score-sep">:</span>
+                            <span>-</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="mr-away">
+                        <span className="mr-team-name">
+                          <CountryFlag code={match.away.flagCode} label={match.away.name} className="mr-team-flag" />
+                          <span>{match.away.name}</span>
+                        </span>
+                      </div>
                     </div>
                     <div className="mr-info">
                       <div className="mr-group">{match.group}</div>
