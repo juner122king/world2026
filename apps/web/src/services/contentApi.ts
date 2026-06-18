@@ -16,11 +16,7 @@ async function fetchJsonContent(url: string, signal?: AbortSignal): Promise<Worl
 export async function fetchWorldCupContent(signal?: AbortSignal): Promise<WorldCupContent> {
   try {
     return await fetchJsonContent(contentUrl, signal)
-  } catch (error) {
-    if (!import.meta.env.DEV) {
-      throw error
-    }
-
+  } catch {
     return fetchJsonContent(fallbackContentUrl, signal)
   }
 }
