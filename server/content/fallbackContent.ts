@@ -73,7 +73,8 @@ export function getFallbackContent(): WorldCupContent {
 }
 
 export const fallbackContent = new Proxy({} as WorldCupContent, {
-  get() {
-    return loadFallbackContent()
+  get(_target, prop) {
+    const content = loadFallbackContent()
+    return content[prop as keyof WorldCupContent]
   },
 })
