@@ -7,7 +7,7 @@
   "crons": [
     {
       "path": "/api/sync/worldcup2026",
-      "schedule": "0 0 * * *"
+      "schedule": "*/5 * * * *"
     }
   ]
 }
