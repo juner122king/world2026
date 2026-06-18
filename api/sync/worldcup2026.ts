@@ -5,11 +5,13 @@ import { fetchProviderPayload, mapProviderPayloadToContent } from '../../server/
 import { buildOverallPredictions } from '../../server/content/predictions.js'
 import { hasSnapshotStorage, writeContentSnapshot, writeSyncStatus } from '../../server/content/storage.js'
 
-// World Cup 2026: June 11 – July 19, kickoff hours in Beijing time
+// World Cup 2026: June 11 – July 19
+// Kickoff hours (Beijing time): 00, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12
+// Matches span from 00:00 to ~14:00 Beijing time, then quiet until next day
 const TOURNAMENT_START = new Date('2026-06-11T00:00:00+08:00')
 const TOURNAMENT_END = new Date('2026-07-20T00:00:00+08:00')
-const MATCH_HOURS_BEIJING = [1, 3, 4, 6, 9, 12]
-const SYNC_WINDOW_MINUTES = 90 // sync from kickoff to 90 min after
+const MATCH_WINDOW_START = 0  // Beijing hour
+const MATCH_WINDOW_END = 15   // Beijing hour (12:00 kickoff + ~2h match + buffer)
 
 function getBearerToken(header: string | undefined) {
   const match = header?.match(/^Bearer\s+(.+)$/i)
@@ -31,7 +33,7 @@ function isDuringTournament(): boolean {
 
 function isInMatchWindow(): boolean {
   const hour = getBeijingHour()
-  return MATCH_HOURS_BEIJING.some((matchHour) => hour >= matchHour && hour < matchHour + 2)
+  return hour >= MATCH_WINDOW_START && hour < MATCH_WINDOW_END
 }
 
 function shouldSkipSync(): boolean {
