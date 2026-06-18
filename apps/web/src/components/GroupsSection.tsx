@@ -44,7 +44,6 @@ export function GroupsSection({ groups }: GroupsSectionProps) {
                         <span className="gc-name">
                           <span className="gc-name-text">{team.name}</span>
                           {team.champion && <span className="gc-tag gc-tag-champion">冠军</span>}
-                          {team.debut && <span className="gc-tag gc-tag-debut">首秀</span>}
                         </span>
                       </div>
                       <span className="gc-standings-rank">{standing?.rank ?? index + 1}</span>
