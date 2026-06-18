@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 import { fallbackContent } from '../../server/content/fallbackContent.js'
+import { hasCoreContentData } from '../../server/content/contentHealth.js'
 import { readContentSnapshot } from '../../server/content/storage.js'
 
 export default async function handler(request: VercelRequest, response: VercelResponse) {
@@ -11,7 +12,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
   try {
     const snapshot = await readContentSnapshot()
-    const content = snapshot ?? fallbackContent
+    const content = snapshot && hasCoreContentData(snapshot) ? snapshot : fallbackContent
 
     response.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300')
     response.status(200).json(content)

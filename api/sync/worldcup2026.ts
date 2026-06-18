@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node'
+import { hasCoreContentData } from '../../server/content/contentHealth.js'
 import { fetchProviderPayload, mapProviderPayloadToContent } from '../../server/content/provider.js'
 import { buildOverallPredictions } from '../../server/content/predictions.js'
 import { hasSnapshotStorage, writeContentSnapshot, writeSyncStatus } from '../../server/content/storage.js'
@@ -51,6 +52,11 @@ export default async function handler(request: VercelRequest, response: VercelRe
 
     const payload = await fetchProviderPayload()
     const content = mapProviderPayloadToContent(payload, syncedAt)
+
+    if (!hasCoreContentData(content)) {
+      throw new Error('Football API returned incomplete content: empty schedule or standings')
+    }
+
     const nextContent = {
       ...content,
       predictions: {
