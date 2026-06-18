@@ -282,14 +282,18 @@ function mapFixtureStatus(rawFixture: ProviderObject): { status: ScheduleMatchSt
   const statusMeta = asObject(fixtureMeta.status)
   const short = getString(statusMeta.short).toUpperCase()
   const long = getString(statusMeta.long)
-  const rawStatus = getString(rawFixture.status).toUpperCase()
-  const normalized = short || rawStatus
+  const rawStatus = getString(rawFixture.status)
+  const normalized = short || rawStatus.toUpperCase()
 
   if (['FT', 'AET', 'PEN', 'CANC', 'ABD', 'AWD', 'WO'].includes(normalized)) {
     return { status: 'finished', label: long || '已完赛' }
   }
 
-  if (['1H', '2H', 'HT', 'ET', 'BT', 'P', 'LIVE', 'IN_PLAY'].includes(normalized)) {
+  if (['COMPLETED', 'FINISHED'].includes(normalized)) {
+    return { status: 'finished', label: long || '已完赛' }
+  }
+
+  if (['1H', '2H', 'HT', 'ET', 'BT', 'P', 'LIVE', 'IN_PLAY', 'IN_PROGRESS', 'PLAYING'].includes(normalized)) {
     return { status: 'live', label: long || '进行中' }
   }
 
@@ -307,8 +311,8 @@ function mapFixtureScore(rawFixture: ProviderObject) {
   const goals = asObject(rawFixture.goals)
   const score = asObject(rawFixture.score)
   const fulltime = asObject(score.fulltime)
-  const home = getNumber(goals.home, getNumber(fulltime.home, Number.NaN))
-  const away = getNumber(goals.away, getNumber(fulltime.away, Number.NaN))
+  const home = getNumber(goals.home, getNumber(fulltime.home, getNumber(rawFixture.home_score, Number.NaN)))
+  const away = getNumber(goals.away, getNumber(fulltime.away, getNumber(rawFixture.away_score, Number.NaN)))
 
   if (!Number.isFinite(home) || !Number.isFinite(away)) {
     return undefined
@@ -354,7 +358,7 @@ function mapFixtureToMatch(rawFixture: unknown): { key: string; match: ScheduleM
   const groupName = getString(fixture.group_name)
   const round = getString(fixture.round, getString(league.round, getString(fixture.group, '世界杯')))
   const stadium = getString(fixture.stadium)
-  const city = getString(fixture.city, getString(venue.city, '城市待定'))
+  const city = getString(fixture.city, getString(fixture.stadium_city, getString(venue.city, '城市待定')))
   const matchStatus = mapFixtureStatus(fixture)
   const score = mapFixtureScore(fixture)
 
