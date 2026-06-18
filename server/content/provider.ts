@@ -456,6 +456,16 @@ function createStandingEntry(rawEntry: unknown): GroupStandingEntry | null {
   }
 }
 
+function findFallbackTeam(fallbackGroup: Group, apiTeam: GroupTeam): GroupTeam {
+  const byFlag = fallbackGroup.teams.find((t) => t.flagCode === apiTeam.flagCode)
+  if (byFlag) return byFlag
+
+  const byName = fallbackGroup.teams.find((t) => t.name === apiTeam.name)
+  if (byName) return byName
+
+  return apiTeam
+}
+
 function computeStandingsFromFixtures(fixtures: unknown[], fallbackGroups: Group[]): Map<string, GroupStandingEntry[]> {
   const fallbackByLetter = new Map(fallbackGroups.map((g) => [g.letter, g]))
   const tablesByLetter = new Map<string, Map<string, GroupStandingEntry>>()
@@ -479,9 +489,10 @@ function computeStandingsFromFixtures(fixtures: unknown[], fallbackGroups: Group
       continue
     }
 
+    const fallbackGroup = fallbackByLetter.get(letter)!
     const teams = asObject(fixture.teams)
-    const homeTeam = createTeam(teams.home ?? fixture.home_team, '待定')
-    const awayTeam = createTeam(teams.away ?? fixture.away_team, '待定')
+    const homeTeam = findFallbackTeam(fallbackGroup, createTeam(teams.home ?? fixture.home_team, '待定'))
+    const awayTeam = findFallbackTeam(fallbackGroup, createTeam(teams.away ?? fixture.away_team, '待定'))
 
     if (!tablesByLetter.has(letter)) {
       tablesByLetter.set(letter, new Map())
