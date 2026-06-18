@@ -456,7 +456,99 @@ function createStandingEntry(rawEntry: unknown): GroupStandingEntry | null {
   }
 }
 
-function buildGroupStandings(standings: unknown[], fallbackGroups: Group[]) {
+function computeStandingsFromFixtures(fixtures: unknown[], fallbackGroups: Group[]): Map<string, GroupStandingEntry[]> {
+  const fallbackByLetter = new Map(fallbackGroups.map((g) => [g.letter, g]))
+  const tablesByLetter = new Map<string, Map<string, GroupStandingEntry>>()
+
+  for (const rawFixture of fixtures) {
+    const fixture = asObject(rawFixture)
+    const groupName = getString(fixture.group_name)
+    const letter = groupName ? extractGroupLetter(groupName) : ''
+
+    if (!letter || !fallbackByLetter.has(letter)) {
+      continue
+    }
+
+    const matchStatus = mapFixtureStatus(fixture)
+    if (matchStatus.status !== 'finished' && matchStatus.status !== 'live') {
+      continue
+    }
+
+    const score = mapFixtureScore(fixture)
+    if (!score) {
+      continue
+    }
+
+    const teams = asObject(fixture.teams)
+    const homeTeam = createTeam(teams.home ?? fixture.home_team, '待定')
+    const awayTeam = createTeam(teams.away ?? fixture.away_team, '待定')
+
+    if (!tablesByLetter.has(letter)) {
+      tablesByLetter.set(letter, new Map())
+    }
+
+    const table = tablesByLetter.get(letter)!
+    const homeKey = `${homeTeam.flagCode}:${homeTeam.name}`
+    const awayKey = `${awayTeam.flagCode}:${awayTeam.name}`
+
+    if (!table.has(homeKey)) {
+      table.set(homeKey, { rank: 0, team: homeTeam, played: 0, won: 0, draw: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 })
+    }
+
+    if (!table.has(awayKey)) {
+      table.set(awayKey, { rank: 0, team: awayTeam, played: 0, won: 0, draw: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, goalDifference: 0, points: 0 })
+    }
+
+    const homeEntry = table.get(homeKey)!
+    const awayEntry = table.get(awayKey)!
+
+    homeEntry.played += 1
+    homeEntry.goalsFor += score.home
+    homeEntry.goalsAgainst += score.away
+    homeEntry.goalDifference = homeEntry.goalsFor - homeEntry.goalsAgainst
+
+    awayEntry.played += 1
+    awayEntry.goalsFor += score.away
+    awayEntry.goalsAgainst += score.home
+    awayEntry.goalDifference = awayEntry.goalsFor - awayEntry.goalsAgainst
+
+    if (score.home > score.away) {
+      homeEntry.won += 1
+      homeEntry.points += 3
+      awayEntry.lost += 1
+    } else if (score.home < score.away) {
+      awayEntry.won += 1
+      awayEntry.points += 3
+      homeEntry.lost += 1
+    } else {
+      homeEntry.draw += 1
+      homeEntry.points += 1
+      awayEntry.draw += 1
+      awayEntry.points += 1
+    }
+  }
+
+  const result = new Map<string, GroupStandingEntry[]>()
+
+  for (const [letter, table] of tablesByLetter) {
+    const sorted = Array.from(table.values())
+      .sort((a, b) => {
+        if (b.points !== a.points) return b.points - a.points
+        if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference
+        if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor
+        return a.team.name.localeCompare(b.team.name, 'zh-CN')
+      })
+      .map((entry, index) => ({ ...entry, rank: index + 1 }))
+
+    if (sorted.length > 0) {
+      result.set(letter, sorted)
+    }
+  }
+
+  return result
+}
+
+function buildGroupStandings(standings: unknown[], fallbackGroups: Group[], fixtures: unknown[]) {
   const standingsByLetter = new Map<string, GroupStandingEntry[]>()
 
   for (const standing of standings) {
@@ -490,9 +582,11 @@ function buildGroupStandings(standings: unknown[], fallbackGroups: Group[]) {
     }
   }
 
+  const computedStandings = computeStandingsFromFixtures(fixtures, fallbackGroups)
+
   return fallbackGroups.map((group) => ({
     ...group,
-    standings: standingsByLetter.get(group.letter) ?? group.standings,
+    standings: standingsByLetter.get(group.letter) ?? computedStandings.get(group.letter) ?? group.standings,
   }))
 }
 
@@ -570,7 +664,7 @@ export function mapProviderPayloadToContent(payload: ProviderPayload, syncedAt =
   const scheduleDays = buildScheduleDays(payload.fixtures)
   const matchCount = scheduleDays.reduce((total, day) => total + day.matches.length, 0)
   const fallbackGroups = Array.isArray(fallbackContent.groups) ? fallbackContent.groups : []
-  const groups = buildGroupStandings(payload.standings, fallbackGroups)
+  const groups = buildGroupStandings(payload.standings, fallbackGroups, payload.fixtures)
 
   return {
     ...fallbackContent,
