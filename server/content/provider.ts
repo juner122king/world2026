@@ -1,4 +1,4 @@
-import { fallbackContent } from './fallbackContent.js'
+import { getFallbackContent } from './fallbackContent.js'
 import { formatChinaMatchDate } from './date.js'
 import type { Group, GroupStandingEntry, GroupTeam, ScheduleDay, ScheduleMatch, ScheduleMatchStatus, WorldCupContent } from '@world2026/content-contract'
 
@@ -566,6 +566,7 @@ export async function fetchProviderPayload(): Promise<ProviderPayload> {
 }
 
 export function mapProviderPayloadToContent(payload: ProviderPayload, syncedAt = new Date().toISOString()): WorldCupContent {
+  const fallbackContent = getFallbackContent()
   const scheduleDays = buildScheduleDays(payload.fixtures)
   const matchCount = scheduleDays.reduce((total, day) => total + day.matches.length, 0)
   const groups = buildGroupStandings(payload.standings, fallbackContent.groups)
