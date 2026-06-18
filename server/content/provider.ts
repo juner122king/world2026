@@ -569,7 +569,8 @@ export function mapProviderPayloadToContent(payload: ProviderPayload, syncedAt =
   const fallbackContent = getFallbackContent()
   const scheduleDays = buildScheduleDays(payload.fixtures)
   const matchCount = scheduleDays.reduce((total, day) => total + day.matches.length, 0)
-  const groups = buildGroupStandings(payload.standings, fallbackContent.groups)
+  const fallbackGroups = Array.isArray(fallbackContent.groups) ? fallbackContent.groups : []
+  const groups = buildGroupStandings(payload.standings, fallbackGroups)
 
   return {
     ...fallbackContent,
