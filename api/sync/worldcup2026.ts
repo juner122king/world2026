@@ -3,48 +3,40 @@ import { hasCoreContentData } from '../../server/content/contentHealth.js'
 import { CHINA_TIME_ZONE } from '../../server/content/constants.js'
 import { fetchProviderPayload, mapProviderPayloadToContent } from '../../server/content/provider.js'
 import { buildOverallPredictions } from '../../server/content/predictions.js'
-import { hasSnapshotStorage, readContentSnapshot, writeContentSnapshot, writeSyncStatus } from '../../server/content/storage.js'
+import { hasSnapshotStorage, writeContentSnapshot, writeSyncStatus } from '../../server/content/storage.js'
 
-const SKIP_WINDOW_MINUTES = 60
+// World Cup 2026: June 11 – July 19, kickoff hours in Beijing time
+const TOURNAMENT_START = new Date('2026-06-11T00:00:00+08:00')
+const TOURNAMENT_END = new Date('2026-07-20T00:00:00+08:00')
+const MATCH_HOURS_BEIJING = [1, 3, 4, 6, 9, 12]
+const SYNC_WINDOW_MINUTES = 90 // sync from kickoff to 90 min after
 
 function getBearerToken(header: string | undefined) {
   const match = header?.match(/^Bearer\s+(.+)$/i)
   return match?.[1]
 }
 
-function parseMatchTime(matchTime: string, matchDay: string, matchMonth: string): Date | null {
-  const monthMap: Record<string, number> = { '六月': 6, '七月': 7 }
-  const month = monthMap[matchMonth]
-  if (!month || !matchDay || !matchTime) return null
-
-  const [hour, minute] = matchTime.split(':').map(Number)
-  if (Number.isNaN(hour) || Number.isNaN(minute)) return null
-
-  const now = new Date()
-  const year = now.getFullYear()
-  const date = new Date(year, month - 1, Number(matchDay), hour, minute)
-  return date
+function getBeijingHour(): number {
+  return Number(new Intl.DateTimeFormat('en-GB', {
+    timeZone: CHINA_TIME_ZONE,
+    hour: '2-digit',
+    hour12: false,
+  }).format(new Date()))
 }
 
-async function shouldSkipSync(): Promise<boolean> {
-  const snapshot = await readContentSnapshot()
-  if (!snapshot?.schedule?.days) return false
-
+function isDuringTournament(): boolean {
   const now = new Date()
-  const windowEnd = new Date(now.getTime() + SKIP_WINDOW_MINUTES * 60 * 1000)
+  return now >= TOURNAMENT_START && now < TOURNAMENT_END
+}
 
-  for (const day of snapshot.schedule.days) {
-    for (const match of day.matches) {
-      if (match.status === 'live') return false
+function isInMatchWindow(): boolean {
+  const hour = getBeijingHour()
+  return MATCH_HOURS_BEIJING.some((matchHour) => hour >= matchHour && hour < matchHour + 2)
+}
 
-      if (match.status === 'scheduled') {
-        const matchTime = parseMatchTime(match.time, day.day, day.month)
-        if (matchTime && matchTime <= windowEnd) return false
-      }
-    }
-  }
-
-  return true
+function shouldSkipSync(): boolean {
+  if (!isDuringTournament()) return true
+  return !isInMatchWindow()
 }
 
 function isAuthorized(request: VercelRequest) {
@@ -89,8 +81,8 @@ export default async function handler(request: VercelRequest, response: VercelRe
       throw new Error('KV_REST_API_URL and KV_REST_API_TOKEN are required for sync')
     }
 
-    if (!force && await shouldSkipSync()) {
-      response.status(200).json({ ok: true, skipped: true, syncedAt, message: 'No live or upcoming matches' })
+    if (!force && shouldSkipSync()) {
+      response.status(200).json({ ok: true, skipped: true, syncedAt, message: 'Outside match window, skipping sync' })
       return
     }
 
